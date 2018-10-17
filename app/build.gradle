@@ -1,0 +1,87 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.gnz.locamat"
+        minSdkVersion 22
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+androidExtensions {
+    experimental = true
+}
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    // Kotlin
+    implementation libs.kotlin
+
+    // Support
+    implementation libs.appCompat
+    implementation libs.constraintLayout
+    implementation libs.annotation
+    implementation libs.legacySupport
+
+    // Architectural
+    implementation libs.lifecycle
+    implementation libs.paging
+
+    // Koin
+    implementation libs.koin
+    implementation libs.koinViewModel
+
+    //RxJava
+    implementation libs.rxJava2
+    implementation(libs.rxKotlin2) {
+        exclude module: 'rxjava'
+        exclude module: 'kotlin-stdlib'
+    }
+    implementation(libs.rxAndroid2) {
+        exclude module: 'rxjava'
+    }
+    
+    // Moshi
+    implementation libs.moshi
+
+    // OkHttp + Retrofit
+    implementation libs.okHttp
+    implementation libs.okHttpLoggingInterceptor
+    implementation libs.retrofit
+    implementation libs.retrofitMoshiConverter
+    implementation libs.retrofitRxJava2Adapter
+
+    // Anko
+    implementation libs.ankoCommons
+    implementation libs.ankoAppCompat
+
+    // Timber
+    implementation libs.timber
+
+    // Joda Time
+    implementation libs.jodaTime
+
+    // test
+    testImplementation test.junit
+    androidTestImplementation test.runner
+    androidTestImplementation test.espresso
+}
