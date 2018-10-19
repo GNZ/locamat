@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.paging.PagedList
 
 import com.gnz.locamat.R
-import com.gnz.locamat.data.DisATM
+import com.gnz.locamat.data.*
 import com.gnz.locamat.extensions.observe
 import com.gnz.locamat.feature.atmlist.adapter.ATMPagedAdapter
 import com.gnz.locamat.feature.atmlist.adapter.OnClickListener
@@ -44,14 +44,34 @@ class AtmListFragment : Fragment(), OnClickListener {
         atmRecyclerView.adapter = atmAdapter
     }
 
-    private fun initData(){
-        with(atmViewModel){
-            observe(observeAtms(),::setPagedList)
+    private fun initData() {
+        with(atmViewModel) {
+            observe(observeAtms(), ::setPagedList)
+            observe(observeResultState(), ::showState)
         }
     }
 
-    private fun setPagedList(atmList: PagedList<DisATM>){
+    private fun setPagedList(atmList: PagedList<DisATM>) {
         atmAdapter.submitList(atmList)
+    }
+
+    private fun showState(resourceState: ResourceState) = when (resourceState) {
+        is Loading -> showLoadingState(true)
+        is PopulateState -> showLoadingState(false)
+        is EmptyState -> showLoadingState(false)
+        is ErrorState -> showErrorState()
+    }
+
+    private fun showLoadingState(showLoading: Boolean) {
+        progressBar.visibility = if (showLoading) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
+    }
+
+    private fun showErrorState() {
+
     }
 
     override fun click(disATM: DisATM) {
