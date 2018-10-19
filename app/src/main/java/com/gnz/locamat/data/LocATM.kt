@@ -1,5 +1,6 @@
 package com.gnz.locamat.data
 
+import android.location.Location
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -21,3 +22,8 @@ fun ATM.toLocATM(): LocATM = LocATM(name = name,
         formatted = address.formatted,
         latitude = latitude,
         longitude = longitude)
+
+fun LocATM.getLocation() = Location(name).apply {
+    latitude = this@getLocation.latitude
+    longitude = this@getLocation.longitude
+}

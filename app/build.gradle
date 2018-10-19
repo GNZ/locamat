@@ -45,8 +45,11 @@ dependencies {
     implementation libs.lifecycle
     implementation libs.paging
     implementation libs.room
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+    implementation libs.legacySupport
     kapt proc.room
+
+    // Maps
+    implementation libs.maps
 
     // Koin
     implementation libs.koin

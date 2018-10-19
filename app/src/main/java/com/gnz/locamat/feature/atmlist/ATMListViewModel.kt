@@ -1,15 +1,18 @@
 package com.gnz.locamat.feature.atmlist
 
-import androidx.lifecycle.LiveData
+import android.location.Location
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.gnz.locamat.common.DistanceUtil
+import com.gnz.locamat.data.DisATM
 import com.gnz.locamat.data.LocATM
+import com.gnz.locamat.data.getLocation
 import com.gnz.locamat.data.toLocATM
 import com.gnz.locamat.repository.local.LocalRepository
 import com.gnz.locamat.repository.remote.RemoteRepository
-import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
@@ -25,8 +28,8 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
             .setEnablePlaceholders(false)
             .build()
 
-    val atmListLiveData by lazy {
-        LivePagedListBuilder<Int, LocATM>(localRepository.observeAllPaged(), config).build()
+    private val locationLiveData by lazy {
+        MutableLiveData<Location>()
     }
 
     init {
@@ -41,7 +44,23 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
                 .subscribe { localRepository::insert }
     }
 
-    fun onClick(atm: LocATM){
+    fun observeAtms() = Transformations.switchMap(locationLiveData) { location ->
+        LivePagedListBuilder<Int, DisATM>(
+                localRepository.observeAllPaged()
+                        .map { locAtm ->
+                            DisATM(locAtm.id!!,
+                                    locAtm.name,
+                                    locAtm.formatted,
+                                    DistanceUtil.calculateDistance(locAtm.getLocation(), location))
+                        }, config)
+                .build()
+    }
+
+    fun updateLocation(location: Location){
+        locationLiveData.postValue(location)
+    }
+
+    fun onClick(atm: LocATM) {
 
     }
 

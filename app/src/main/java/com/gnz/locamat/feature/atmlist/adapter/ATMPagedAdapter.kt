@@ -6,6 +6,7 @@ import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gnz.locamat.R
+import com.gnz.locamat.common.DistanceUtil
 import com.gnz.locamat.data.DisATM
 import kotlinx.android.synthetic.main.atm_viewholder.view.*
 
@@ -18,7 +19,14 @@ class ATMPagedAdapter : PagedListAdapter<DisATM, ATMViewHolder>(ItemCallback) {
         getItem(position)?.let { atm ->
             holder.atmAddress.text = atm.address
             holder.atmName.text = atm.name
-            holder.atmDistance.text = atm.distance
+            holder.atmDistance.text = getFormattedDistance(atm.distance, holder)
+        }
+    }
+
+    private fun getFormattedDistance(distance: Float, holder: ATMViewHolder): String = with(DistanceUtil.formatDistance(distance)) {
+        when (distanceUnit) {
+            DistanceUtil.DistanceUnit.M -> holder.itemView.context.getString(R.string.distance_meters, distance)
+            else -> holder.itemView.context.getString(R.string.distance_kilometers, distance)
         }
     }
 
