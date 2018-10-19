@@ -45,6 +45,7 @@ dependencies {
     implementation libs.lifecycle
     implementation libs.paging
     implementation libs.room
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
     kapt proc.room
 
     // Koin
@@ -60,7 +61,7 @@ dependencies {
     implementation(libs.rxAndroid2) {
         exclude module: 'rxjava'
     }
-    
+
     // Moshi
     implementation libs.moshi
 

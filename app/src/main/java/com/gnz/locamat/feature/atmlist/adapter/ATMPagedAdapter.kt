@@ -2,32 +2,32 @@ package com.gnz.locamat.feature.atmlist.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.lifecycle.LifecycleOwner
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gnz.locamat.R
-import com.gnz.locamat.data.LocATM
+import com.gnz.locamat.data.DisATM
 import kotlinx.android.synthetic.main.atm_viewholder.view.*
 
 
-class ATMPagedAdapter(private val mLifecycleOwner: LifecycleOwner) : PagedListAdapter<LocATM, ATMViewHolder>(ItemCallback) {
+class ATMPagedAdapter : PagedListAdapter<DisATM, ATMViewHolder>(ItemCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ATMViewHolder = ATMViewHolder(parent)
 
     override fun onBindViewHolder(holder: ATMViewHolder, position: Int) {
-        getItem(position)?.let { locATM ->
-            holder.atmAddress.text = locATM.formatted
-            holder.atmName.text = locATM.name
+        getItem(position)?.let { atm ->
+            holder.atmAddress.text = atm.address
+            holder.atmName.text = atm.name
+            holder.atmDistance.text = atm.distance
         }
     }
 
-    private object ItemCallback : DiffUtil.ItemCallback<LocATM>() {
+    private object ItemCallback : DiffUtil.ItemCallback<DisATM>() {
 
-        override fun areContentsTheSame(oldItem: LocATM, newItem: LocATM): Boolean =
+        override fun areContentsTheSame(oldItem: DisATM, newItem: DisATM): Boolean =
                 oldItem == newItem
 
-        override fun areItemsTheSame(oldItem: LocATM, newItem: LocATM): Boolean =
+        override fun areItemsTheSame(oldItem: DisATM, newItem: DisATM): Boolean =
                 oldItem.id != newItem.id
     }
 }
