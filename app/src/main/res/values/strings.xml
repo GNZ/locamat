@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">locamat</string>
+
+    <string name="atm_image_description">ATM icon</string>
 </resources>

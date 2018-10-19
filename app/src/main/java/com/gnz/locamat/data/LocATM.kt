@@ -14,3 +14,10 @@ data class LocATM(
         val longitude: Double)
 
 const val TABLE_NAME = "atm"
+
+fun ATM.toLocATM(): LocATM = LocATM(name = name,
+        city = address.city,
+        zip = address.zip,
+        formatted = address.formatted,
+        latitude = latitude,
+        longitude = longitude)
