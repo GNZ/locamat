@@ -9,8 +9,8 @@ data class ATM(
         val category: String,
         val categoryText: String,
         val imagePath: String,
-        val latitude: String,
-        val longitude: String,
+        val latitude: Double,
+        val longitude: Double,
         val name: String,
         val sonectId: String,
         val tagline: String

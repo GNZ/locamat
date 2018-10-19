@@ -40,11 +40,12 @@ dependencies {
     implementation libs.appCompat
     implementation libs.constraintLayout
     implementation libs.annotation
-    implementation libs.legacySupport
 
     // Architectural
     implementation libs.lifecycle
     implementation libs.paging
+    implementation libs.room
+    kapt proc.room
 
     // Koin
     implementation libs.koin
@@ -70,15 +71,8 @@ dependencies {
     implementation libs.retrofitMoshiConverter
     implementation libs.retrofitRxJava2Adapter
 
-    // Anko
-    implementation libs.ankoCommons
-    implementation libs.ankoAppCompat
-
     // Timber
     implementation libs.timber
-
-    // Joda Time
-    implementation libs.jodaTime
 
     // test
     testImplementation test.junit
