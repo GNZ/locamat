@@ -13,6 +13,8 @@ import kotlinx.android.synthetic.main.atm_viewholder.view.*
 
 class ATMPagedAdapter : PagedListAdapter<DisATM, ATMViewHolder>(ItemCallback) {
 
+    var clickListener: OnClickListener? = null
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ATMViewHolder = ATMViewHolder(parent)
 
     override fun onBindViewHolder(holder: ATMViewHolder, position: Int) {
@@ -20,13 +22,16 @@ class ATMPagedAdapter : PagedListAdapter<DisATM, ATMViewHolder>(ItemCallback) {
             holder.atmAddress.text = atm.address
             holder.atmName.text = atm.name
             holder.atmDistance.text = getFormattedDistance(atm.distance, holder)
+            holder.itemView.setOnClickListener {
+                clickListener?.click(atm)
+            }
         }
     }
 
     private fun getFormattedDistance(distance: Float, holder: ATMViewHolder): String = with(DistanceUtil.formatDistance(distance)) {
         when (distanceUnit) {
-            DistanceUtil.DistanceUnit.M -> holder.itemView.context.getString(R.string.distance_meters, distance)
-            else -> holder.itemView.context.getString(R.string.distance_kilometers, distance)
+            DistanceUtil.DistanceUnit.M -> holder.itemView.context.getString(R.string.distance_meters, this.distance)
+            else -> holder.itemView.context.getString(R.string.distance_kilometers, this.distance)
         }
     }
 
@@ -45,4 +50,8 @@ class ATMViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
     val atmName = itemView.atmNameTextView
     val atmDistance = itemView.atmDistanceTextView
     val atmAddress = itemView.atmAddressTextView
+}
+
+interface OnClickListener {
+    fun click(disATM: DisATM)
 }

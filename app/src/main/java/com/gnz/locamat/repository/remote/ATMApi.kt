@@ -7,6 +7,6 @@ import retrofit2.http.GET
 
 interface ATMApi {
 
-    @GET("data/ATM_20181005_DEV")
+    @GET("data/ATM_20181005_DEV.json")
     fun getAtms(): Single<List<ATM>>
 }

@@ -49,7 +49,9 @@ dependencies {
     kapt proc.room
 
     // Maps
-    implementation libs.maps
+    implementation (libs.maps){
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
     // Koin
     implementation libs.koin
