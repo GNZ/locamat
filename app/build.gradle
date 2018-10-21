@@ -47,6 +47,7 @@ dependencies {
     implementation libs.room
     implementation libs.legacySupport
     kapt proc.room
+    implementation libs.reactiveLiveData
 
     // Maps
     implementation (libs.maps){

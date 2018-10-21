@@ -2,9 +2,10 @@ package com.gnz.locamat.feature.atmlist
 
 import android.location.Location
 import androidx.lifecycle.*
-import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import com.github.musichin.reactivelivedata.switchLatest
+import com.github.musichin.reactivelivedata.switchMap
 import com.gnz.locamat.common.DistanceUtil
 import com.gnz.locamat.data.*
 import com.gnz.locamat.repository.local.LocalRepository
@@ -31,9 +32,7 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
     private val mediatorLiveData = MediatorLiveData<PagedList<DisATM>>()
 
-    private val locationLiveData by lazy {
-        MutableLiveData<Location>()
-    }
+    private val switchMap = MutableLiveData<LiveData<PagedList<DisATM>>>()
 
     private val stateLiveData by lazy {
         MutableLiveData<ResourceState>()
@@ -42,23 +41,21 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
     init {
         stateLiveData.postValue(EmptyState)
         fetchAndStoreATMs()
-        updateLocation(location)
-        mediatorLiveData.addSource(observeLocation()) { list ->
-            handleResponse(list)
-        }
-        mediatorLiveData.addSource(observeDatabase()) { list ->
-            handleResponse(list)
-        }
+        switchMap.value = mapPagedList(null)
+        //updateLocation(location)
+//        mediatorLiveData.addSource(observeDatabase()) { list ->
+//            handleResponse(list)
+//        }
     }
 
-    private fun handleResponse(list: PagedList<DisATM>) {
-        if (list.isNotEmpty()) {
-            mediatorLiveData.value = list
-            stateLiveData.postValue(PopulateState)
-        } else {
-            stateLiveData.postValue(EmptyState)
-        }
-    }
+//    private fun handleResponse(list: PagedList<DisATM>) {
+//        if (list.isNotEmpty()) {
+//            mediatorLiveData.value = list
+//            stateLiveData.postValue(PopulateState)
+//        } else {
+//            stateLiveData.postValue(EmptyState)
+//        }
+//    }
 
     private fun fetchAndStoreATMs() {
         compositeDisposable += remoteRepository.getAtms()
@@ -69,27 +66,27 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
     fun observeResultState(): LiveData<ResourceState> = stateLiveData
 
-    fun observeAtms(): LiveData<PagedList<DisATM>> = mediatorLiveData
+    fun observeAtms():LiveData<PagedList<DisATM>> = switchMap.switchLatest()
 
-    private fun observeLocation() = Transformations.switchMap(locationLiveData) { location ->
-        mapPagedList(location)
-    }
-
-    private fun observeDatabase(): LiveData<PagedList<DisATM>> = mapPagedList(location)
-
-    private fun mapPagedList(location: Location): LiveData<PagedList<DisATM>> = LivePagedListBuilder<Int, DisATM>(
+    private fun mapPagedList(location: Location?): LiveData<PagedList<DisATM>> = LivePagedListBuilder<Int, DisATM>(
             localRepository.observeAllPaged()
                     .map { locAtm ->
+                        val distanceResult = if (location == null) {
+                            NONE
+                        } else {
+                            Result(DistanceUtil.calculateDistance(locAtm.getLocation(), location))
+                        }
+
                         DisATM(locAtm.id!!,
                                 locAtm.name,
                                 locAtm.formatted,
-                                DistanceUtil.calculateDistance(locAtm.getLocation(), location))
+                                distanceResult
+                        )
                     },
             config).build()
 
     fun updateLocation(location: Location) {
-        this.location = location
-        locationLiveData.postValue(location)
+        switchMap.value = mapPagedList(location)
     }
 
     fun onClick(atm: DisATM) {
