@@ -30,7 +30,7 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
             .setEnablePlaceholders(false)
             .build()
 
-    private val mediatorLiveData = MediatorLiveData<PagedList<DisATM>>()
+//    private val mediatorLiveData = MediatorLiveData<PagedList<DisATM>>()
 
     private val switchMap = MutableLiveData<LiveData<PagedList<DisATM>>>()
 
@@ -48,6 +48,7 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 //        }
     }
 
+    // TODO this will be use later for the search
 //    private fun handleResponse(list: PagedList<DisATM>) {
 //        if (list.isNotEmpty()) {
 //            mediatorLiveData.value = list
