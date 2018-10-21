@@ -45,7 +45,14 @@ dependencies {
     implementation libs.lifecycle
     implementation libs.paging
     implementation libs.room
+    implementation libs.legacySupport
     kapt proc.room
+    implementation libs.reactiveLiveData
+
+    // Maps
+    implementation (libs.maps){
+        exclude group: 'com.android.support', module: 'support-v4'
+    }
 
     // Koin
     implementation libs.koin
@@ -60,7 +67,7 @@ dependencies {
     implementation(libs.rxAndroid2) {
         exclude module: 'rxjava'
     }
-    
+
     // Moshi
     implementation libs.moshi
 

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">locamat</string>
+
+    <string name="atm_image_description">ATM icon</string>
+
+    <string name="distance_meters">%d m</string>
+    <string name="distance_kilometers">%d km</string>
 </resources>

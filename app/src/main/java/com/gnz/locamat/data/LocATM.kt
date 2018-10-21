@@ -1,5 +1,6 @@
 package com.gnz.locamat.data
 
+import android.location.Location
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -14,3 +15,15 @@ data class LocATM(
         val longitude: Double)
 
 const val TABLE_NAME = "atm"
+
+fun ATM.toLocATM(): LocATM = LocATM(name = name,
+        city = address.city,
+        zip = address.zip,
+        formatted = address.formatted,
+        latitude = latitude,
+        longitude = longitude)
+
+fun LocATM.getLocation() = Location(name).apply {
+    latitude = this@getLocation.latitude
+    longitude = this@getLocation.longitude
+}
