@@ -1,10 +1,10 @@
 package com.gnz.locamat.feature.atmlist.adapter
 
+import android.arch.paging.PagedListAdapter
+import android.support.v7.util.DiffUtil
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.gnz.locamat.R
 import com.gnz.locamat.common.DistanceUtil
 import com.gnz.locamat.data.DisATM

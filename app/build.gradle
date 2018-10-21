@@ -19,10 +19,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-}
 
-androidExtensions {
-    experimental = true
+    // For the RxLocation library
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 android {
@@ -40,19 +42,21 @@ dependencies {
     implementation libs.appCompat
     implementation libs.constraintLayout
     implementation libs.annotation
+    implementation libs.legacySupport
+    implementation libs.recyclerView
 
     // Architectural
     implementation libs.lifecycle
     implementation libs.paging
     implementation libs.room
-    implementation libs.legacySupport
     kapt proc.room
-    implementation libs.reactiveLiveData
 
-    // Maps
-    implementation (libs.maps){
-        exclude group: 'com.android.support', module: 'support-v4'
-    }
+    // RxLocation
+    implementation libs.rxLocation
+
+    // Maps and Location
+    implementation libs.maps
+    implementation libs.location
 
     // Koin
     implementation libs.koin
@@ -85,4 +89,10 @@ dependencies {
     testImplementation test.junit
     androidTestImplementation test.runner
     androidTestImplementation test.espresso
+}
+
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }

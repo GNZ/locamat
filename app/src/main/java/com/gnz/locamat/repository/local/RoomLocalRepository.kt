@@ -1,7 +1,7 @@
 package com.gnz.locamat.repository.local
 
-import androidx.lifecycle.LiveData
-import androidx.paging.DataSource
+import android.arch.lifecycle.LiveData
+import android.arch.paging.DataSource
 import com.gnz.locamat.data.LocATM
 
 

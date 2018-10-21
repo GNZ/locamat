@@ -1,7 +1,7 @@
 package com.gnz.locamat.repository.local
 
-import androidx.room.Database
-import androidx.room.RoomDatabase
+import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
 import com.gnz.locamat.data.LocATM
 
 @Database(entities = [LocATM::class], version = 1)

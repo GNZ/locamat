@@ -1,7 +1,7 @@
 package com.gnz.locamat
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.support.v7.app.AppCompatActivity
 import com.gnz.locamat.feature.atmlist.AtmListFragment
 
 class MainActivity : AppCompatActivity() {
@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         initFragment()
     }
 
-    private fun initFragment(){
+    private fun initFragment() {
         supportFragmentManager.beginTransaction()
                 .replace(R.id.container, AtmListFragment.newInstance(), AtmListFragment.TAG)
                 .commit()

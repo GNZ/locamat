@@ -1,26 +1,36 @@
 package com.gnz.locamat.feature.atmlist
 
 
+import android.Manifest
+import android.arch.paging.PagedList
+import android.content.pm.PackageManager
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedList
-
 import com.gnz.locamat.R
 import com.gnz.locamat.data.*
 import com.gnz.locamat.extensions.observe
 import com.gnz.locamat.feature.atmlist.adapter.ATMPagedAdapter
 import com.gnz.locamat.feature.atmlist.adapter.OnClickListener
+import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.fragment_atm_list.*
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.android.viewmodel.ext.android.viewModel
+
 
 class AtmListFragment : Fragment(), OnClickListener {
 
     companion object {
         const val TAG = "AtmListFragment"
+        private val REQUEST_LOCATION = 1011
         fun newInstance() = AtmListFragment()
+
+        val locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000)
     }
 
     private lateinit var atmAdapter: ATMPagedAdapter
@@ -37,6 +47,8 @@ class AtmListFragment : Fragment(), OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         initViews()
         initData()
+        requestPermission()
+        lifecycle.addObserver(atmViewModel)
     }
 
     private fun initViews() {
@@ -60,6 +72,7 @@ class AtmListFragment : Fragment(), OnClickListener {
         is PopulateState -> showLoadingState(false)
         is EmptyState -> showLoadingState(false)
         is ErrorState -> showErrorState()
+        is NoLocationGranted -> noLocationGranted()
     }
 
     private fun showLoadingState(showLoading: Boolean) {
@@ -72,6 +85,31 @@ class AtmListFragment : Fragment(), OnClickListener {
 
     private fun showErrorState() {
 
+    }
+
+    private fun noLocationGranted() {
+
+    }
+
+    private fun requestPermission() {
+        if (ContextCompat.checkSelfPermission(context!!,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION)
+        } else {
+            atmViewModel.startListeningLocation(locationRequest)
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_LOCATION -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    atmViewModel.startListeningLocation(locationRequest)
+                }
+                return
+            }
+        }
     }
 
     override fun click(disATM: DisATM) {

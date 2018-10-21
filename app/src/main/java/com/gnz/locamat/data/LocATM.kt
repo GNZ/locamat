@@ -1,8 +1,8 @@
 package com.gnz.locamat.data
 
+import android.arch.persistence.room.Entity
+import android.arch.persistence.room.PrimaryKey
 import android.location.Location
-import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(tableName = TABLE_NAME)
 data class LocATM(
