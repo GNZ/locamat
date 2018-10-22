@@ -4,8 +4,6 @@ import android.arch.lifecycle.*
 import android.arch.paging.LivePagedListBuilder
 import android.arch.paging.PagedList
 import android.location.Location
-import com.gnz.locamat.common.DistanceUtil
-import com.gnz.locamat.common.switchLatest
 import com.gnz.locamat.data.*
 import com.gnz.locamat.repository.local.LocalRepository
 import com.gnz.locamat.repository.location.LocationPermissionCheck
@@ -14,7 +12,6 @@ import com.gnz.locamat.repository.remote.RemoteRepository
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 
@@ -26,13 +23,8 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var locationDisposable: Disposable? = null
+    private var locationDisposable: CompositeDisposable = CompositeDisposable()
     private var locationRequest: LocationRequest? = null
-
-    private var location = Location("Me now").apply {
-        altitude = 53.853847
-        longitude = 18.629034
-    }
 
     private val config = PagedList.Config.Builder()
             .setPageSize(PAGE_SIZE)
@@ -41,7 +33,9 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
 //    private val mediatorLiveData = MediatorLiveData<PagedList<DisATM>>()
 
-    private val switchMap = MutableLiveData<LiveData<PagedList<DisATM>>>()
+    private val atmList = LivePagedListBuilder<Int, LocATM>(localRepository.observeAllPaged(), config).build()
+
+    private val locationLiveData = MutableLiveData<Location>()
 
     private val stateLiveData by lazy {
         MutableLiveData<ResourceState>()
@@ -50,7 +44,6 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
     init {
         stateLiveData.postValue(EmptyState)
         fetchAndStoreATMs()
-        switchMap.value = mapPagedList(null)
         //updateLocation(location)
 //        mediatorLiveData.addSource(observeDatabase()) { list ->
 //            handleResponse(list)
@@ -81,36 +74,21 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPause() {
-        locationDisposable?.dispose()
+        locationDisposable.dispose()
     }
 
     fun observeResultState(): LiveData<ResourceState> = stateLiveData
 
-    fun observeAtms(): LiveData<PagedList<DisATM>> = switchMap.switchLatest()
+    fun observeAtms(): LiveData<PagedList<LocATM>> = atmList
 
-    private fun mapPagedList(location: Location?): LiveData<PagedList<DisATM>> = LivePagedListBuilder<Int, DisATM>(
-            localRepository.observeAllPaged()
-                    .map { locAtm: LocATM ->
-                        val distanceResult = if (location == null) {
-                            NONE
-                        } else {
-                            Result(DistanceUtil.calculateDistance(locAtm.getLocation(), location))
-                        }
-
-                        DisATM(locAtm.id!!,
-                                locAtm.name,
-                                locAtm.formatted,
-                                distanceResult
-                        )
-                    },
-            config).build()
+    fun observeLocation(): LiveData<Location> = locationLiveData
 
     fun startListeningLocation(locationRequest: LocationRequest) {
-        locationDisposable = locationPermissionCheck.checkLocationPermission(locationRequest)
-                .subscribeOn(Schedulers.io())
+        locationDisposable += locationPermissionCheck.checkLocationPermission(locationRequest)
                 .flatMapObservable { granted ->
                     if (granted) {
                         locationRepository.observeLocation(locationRequest)
+                                .subscribeOn(Schedulers.io())
                                 .map { LocationPermission.LocationGranted(it) }
                     } else {
                         Observable.just(LocationPermission.NotGranted)
@@ -120,16 +98,16 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
                     when (locationPermission) {
                         LocationPermission.NotGranted -> showNotGranted()
                         is LocationPermission.LocationGranted ->
-                            switchMap.value = mapPagedList(location)
+                            locationLiveData.postValue(locationPermission.location)
                     }
                 }
     }
 
     fun showNotGranted() {
-
+        stateLiveData.postValue(NoLocationGranted)
     }
 
-    fun onClick(atm: DisATM) {
+    fun onClick(atm: LocATM) {
 
     }
 

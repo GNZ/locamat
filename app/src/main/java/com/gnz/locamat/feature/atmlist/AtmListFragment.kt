@@ -4,6 +4,7 @@ package com.gnz.locamat.feature.atmlist
 import android.Manifest
 import android.arch.paging.PagedList
 import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -60,11 +61,12 @@ class AtmListFragment : Fragment(), OnClickListener {
         with(atmViewModel) {
             observe(observeAtms(), ::setPagedList)
             observe(observeResultState(), ::showState)
+            observe(observeLocation(), ::postLocation)
         }
     }
 
-    private fun setPagedList(atmList: PagedList<DisATM>) {
-        atmAdapter.submitList(atmList)
+    private fun setPagedList(locAtm: PagedList<LocATM>) {
+        atmAdapter.submitList(locAtm)
     }
 
     private fun showState(resourceState: ResourceState) = when (resourceState) {
@@ -91,6 +93,10 @@ class AtmListFragment : Fragment(), OnClickListener {
 
     }
 
+    private fun postLocation(location : Location){
+        atmAdapter.currentLocation = location
+    }
+
     private fun requestPermission() {
         if (ContextCompat.checkSelfPermission(context!!,
                         Manifest.permission.ACCESS_FINE_LOCATION)
@@ -112,7 +118,7 @@ class AtmListFragment : Fragment(), OnClickListener {
         }
     }
 
-    override fun click(disATM: DisATM) {
-        atmViewModel.onClick(disATM)
+    override fun click(locAtm: LocATM) {
+        atmViewModel.onClick(locAtm)
     }
 }

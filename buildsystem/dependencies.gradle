@@ -42,7 +42,8 @@ ext {
             legacySupport           : "com.android.support:support-v4:$supportVersion",
             maps                    : "com.google.android.gms:play-services-maps:$playVersion",
             location                : "com.google.android.gms:play-services-location:$playVersion",
-            rxLocation              : "com.patloew.rxlocation:rxlocation:1.0.5"
+            rxLocation              : "com.patloew.rxlocation:rxlocation:1.0.5",
+            rxPermissions           : "com.github.tbruyelle:rxpermissions:0.10.2"
     ]
 
     proc = [
