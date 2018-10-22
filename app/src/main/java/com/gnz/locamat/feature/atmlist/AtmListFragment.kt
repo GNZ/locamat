@@ -47,6 +47,7 @@ class AtmListFragment : Fragment(), OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        checkPlayServicesAvailable()
         initViews()
         initData()
         requestPermission()
@@ -96,7 +97,7 @@ class AtmListFragment : Fragment(), OnClickListener {
 
     }
 
-    private fun showLocationError(){
+    private fun showLocationError() {
 
     }
 
@@ -104,7 +105,7 @@ class AtmListFragment : Fragment(), OnClickListener {
 
     }
 
-    private fun postLocation(location : Location){
+    private fun postLocation(location: Location) {
         atmAdapter.currentLocation = location
     }
 
