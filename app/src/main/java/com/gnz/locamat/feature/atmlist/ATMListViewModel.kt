@@ -12,10 +12,10 @@ import com.gnz.locamat.repository.remote.RemoteRepository
 import com.google.android.gms.location.LocationRequest
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.concurrent.TimeUnit
 
 
 class ATMListViewModel(private val remoteRepository: RemoteRepository,
@@ -25,7 +25,7 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
 
     private val compositeDisposable = CompositeDisposable()
 
-    private var locationDisposable: CompositeDisposable = CompositeDisposable()
+    private var locationDisposable: Disposable? = null
     private var locationRequest: LocationRequest? = null
 
     private val config = PagedList.Config.Builder()
@@ -69,14 +69,14 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
                 .subscribe(localRepository::insertAll)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResume() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
         locationRequest?.let { startListeningLocation(it) }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun onPause() {
-        locationDisposable.dispose()
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        locationDisposable?.dispose()
     }
 
     fun observeResultState(): LiveData<ResourceState> = stateLiveData
@@ -86,7 +86,8 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
     fun observeLocation(): LiveData<Location> = locationLiveData
 
     fun startListeningLocation(locationRequest: LocationRequest) {
-        locationDisposable += locationPermissionCheck.checkLocationPermission(locationRequest)
+        this.locationRequest = locationRequest
+        locationDisposable = locationPermissionCheck.checkLocationPermission(locationRequest)
                 .flatMapObservable { granted ->
                     if (granted) {
                         locationRepository.observeLocation(locationRequest)

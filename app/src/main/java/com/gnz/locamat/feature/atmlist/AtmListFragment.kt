@@ -6,9 +6,8 @@ import android.arch.paging.PagedList
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,13 +16,11 @@ import com.gnz.locamat.data.*
 import com.gnz.locamat.extensions.observe
 import com.gnz.locamat.feature.atmlist.adapter.ATMPagedAdapter
 import com.gnz.locamat.feature.atmlist.adapter.OnClickListener
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.fragment_atm_list.*
 import org.koin.android.viewmodel.ext.android.viewModel
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-
-
 
 
 class AtmListFragment : Fragment(), OnClickListener {
@@ -53,12 +50,11 @@ class AtmListFragment : Fragment(), OnClickListener {
         initViews()
         initData()
         requestPermission()
-        lifecycle.addObserver(atmViewModel)
     }
 
-    override fun onResume() {
-        super.onResume()
-        checkPlayServicesAvailable()
+    override fun onDestroy() {
+        super.onDestroy()
+        lifecycle.removeObserver(atmViewModel)
     }
 
     private fun initViews() {
@@ -67,6 +63,7 @@ class AtmListFragment : Fragment(), OnClickListener {
     }
 
     private fun initData() {
+        lifecycle.addObserver(atmViewModel)
         with(atmViewModel) {
             observe(observeAtms(), ::setPagedList)
             observe(observeResultState(), ::showState)
@@ -112,10 +109,11 @@ class AtmListFragment : Fragment(), OnClickListener {
     }
 
     private fun requestPermission() {
-        if (ContextCompat.checkSelfPermission(context!!,
+        if (checkSelfPermission(context!!,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUEST_LOCATION)
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION), REQUEST_LOCATION)
         } else {
             atmViewModel.startListeningLocation(locationRequest)
         }

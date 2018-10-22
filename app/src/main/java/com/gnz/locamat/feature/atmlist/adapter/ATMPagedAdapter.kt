@@ -89,5 +89,5 @@ class ATMViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
 }
 
 interface OnClickListener {
-    fun click(disATM: LocATM)
+    fun click(locAtm: LocATM)
 }
