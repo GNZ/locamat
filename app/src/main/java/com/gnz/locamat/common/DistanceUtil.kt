@@ -15,6 +15,9 @@ object DistanceUtil {
                 else -> FormattedDistance(distance.toInt() / KILOMETER, DistanceUnit.KM)
             }
 
+    fun calculateAndFormatDistance(location1: Location, location2: Location): FormattedDistance =
+            formatDistance(calculateDistance(location1, location2))
+
     data class FormattedDistance(val distance: Int, val distanceUnit: DistanceUnit)
 
     enum class DistanceUnit {
