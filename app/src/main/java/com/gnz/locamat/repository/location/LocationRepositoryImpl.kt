@@ -12,7 +12,6 @@ class LocationRepositoryImpl(private val rxLocation: RxLocation) : LocationRepos
 
     override fun observeLocation(locationRequest: LocationRequest): Observable<Location> = rxLocation.location()
             .updates(locationRequest)
-            .share()
 
     override fun getLocation(): Maybe<Location> = rxLocation.location().lastLocation()
 }

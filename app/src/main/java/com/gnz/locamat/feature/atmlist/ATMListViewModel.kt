@@ -14,6 +14,8 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.plusAssign
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 
 class ATMListViewModel(private val remoteRepository: RemoteRepository,
@@ -94,13 +96,16 @@ class ATMListViewModel(private val remoteRepository: RemoteRepository,
                         Observable.just(LocationPermission.NotGranted)
                     }
                 }
-                .subscribe { locationPermission ->
+                .subscribe({ locationPermission ->
                     when (locationPermission) {
                         LocationPermission.NotGranted -> showNotGranted()
                         is LocationPermission.LocationGranted ->
                             locationLiveData.postValue(locationPermission.location)
                     }
-                }
+                }, {throwable ->
+                    Timber.e(throwable, "Couldn't get the location")
+                    stateLiveData.postValue(LocationError)
+                })
     }
 
     fun showNotGranted() {

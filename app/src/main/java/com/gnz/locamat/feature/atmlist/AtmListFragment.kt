@@ -20,6 +20,10 @@ import com.gnz.locamat.feature.atmlist.adapter.OnClickListener
 import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.fragment_atm_list.*
 import org.koin.android.viewmodel.ext.android.viewModel
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+
+
 
 
 class AtmListFragment : Fragment(), OnClickListener {
@@ -52,6 +56,11 @@ class AtmListFragment : Fragment(), OnClickListener {
         lifecycle.addObserver(atmViewModel)
     }
 
+    override fun onResume() {
+        super.onResume()
+        checkPlayServicesAvailable()
+    }
+
     private fun initViews() {
         atmAdapter = ATMPagedAdapter()
         atmRecyclerView.adapter = atmAdapter
@@ -74,6 +83,7 @@ class AtmListFragment : Fragment(), OnClickListener {
         is PopulateState -> showLoadingState(false)
         is EmptyState -> showLoadingState(false)
         is ErrorState -> showErrorState()
+        is LocationError -> showLocationError()
         is NoLocationGranted -> noLocationGranted()
     }
 
@@ -86,6 +96,10 @@ class AtmListFragment : Fragment(), OnClickListener {
     }
 
     private fun showErrorState() {
+
+    }
+
+    private fun showLocationError(){
 
     }
 
@@ -114,6 +128,19 @@ class AtmListFragment : Fragment(), OnClickListener {
                     atmViewModel.startListeningLocation(locationRequest)
                 }
                 return
+            }
+        }
+    }
+
+    private fun checkPlayServicesAvailable() {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val status = apiAvailability.isGooglePlayServicesAvailable(activity)
+
+        if (status != ConnectionResult.SUCCESS) {
+            if (apiAvailability.isUserResolvableError(status)) {
+                apiAvailability.getErrorDialog(activity, status, 1).show()
+            } else {
+                // TODO show error
             }
         }
     }
