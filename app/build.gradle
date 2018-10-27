@@ -44,11 +44,13 @@ dependencies {
     implementation libs.annotation
     implementation libs.legacySupport
     implementation libs.recyclerView
+    implementation libs.design
 
     // Architectural
     implementation libs.lifecycle
     implementation libs.paging
     implementation libs.room
+    implementation 'com.android.support:support-v4:28.0.0'
     kapt proc.room
 
     // RxLocation

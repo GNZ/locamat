@@ -3,6 +3,11 @@
 
     <string name="atm_image_description">ATM icon</string>
 
+    <string name="map_title">Map</string>
+    <string name="atm_title">ATM</string>
+
     <string name="distance_meters">%d m</string>
     <string name="distance_kilometers">%d km</string>
+
+    <string name="welcome_atm">Welcome to %s</string>
 </resources>

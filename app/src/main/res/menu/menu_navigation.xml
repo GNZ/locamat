@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/atm_list"
+        android:icon="@drawable/ic_atm_machine"
+        android:title="@string/atm_title" />
+    <item
+        android:id="@+id/map"
+        android:icon="@drawable/ic_map_with_placeholder"
+        android:title="@string/map_title" />
+</menu>
