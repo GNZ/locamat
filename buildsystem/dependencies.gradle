@@ -23,6 +23,7 @@ ext {
             appCompat               : "com.android.support:appcompat-v7:$supportVersion",
             constraintLayout        : "com.android.support.constraint:constraint-layout:$constraintLayoutVersion",
             recyclerView            : "com.android.support:recyclerview-v7:$supportVersion",
+            design                  : "com.android.support:design:$supportVersion",
             annotation              : "com.android.support:support-annotations:$supportVersion",
             lifecycle               : "android.arch.lifecycle:extensions:$lifecycleVersion",
             paging                  : "android.arch.paging:runtime:$pagingVersion",
